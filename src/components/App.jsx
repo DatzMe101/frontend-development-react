@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import ProductList from './ProductList';
 import CreateProduct from './CreateProduct';
 
@@ -8,6 +9,16 @@ const stateClearData = {
   category: '',
   description: '',
   price: '',
+};
+
+const productMapper = (product) => {
+  return {
+    id: product._id,
+    productName: product.name,
+    category: product.category.name,
+    description: '',
+    price: product.price,
+  };
 };
 
 class App extends Component {
@@ -36,6 +47,11 @@ class App extends Component {
       price: '',
     },
   };
+
+  async componentDidMount() {
+    const { data } = await axios.get('http://localhost:3001/api/products');
+    this.setState({ products: data.map(productMapper) });
+  }
 
   onUpdateProduct() {
     const { products: previousProducts, form } = this.state;
